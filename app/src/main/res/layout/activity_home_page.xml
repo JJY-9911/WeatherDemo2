@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--帧布局使地图按钮位于顶层-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/homepage">
+
+    <!--页面-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp"
+        android:padding="8dp">
+
+        <!--实时天气-->
+        <RelativeLayout
+            android:id="@+id/now"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_centerHorizontal="true"
+            >
+            <!--城市-->
+            <TextView
+                android:id="@+id/city"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="成都"
+                android:textSize="40sp"
+                android:textColor="#ffffff"
+                android:textStyle="normal"
+                android:layout_centerHorizontal="true"
+                />
+            <!--气温-->
+            <TextView
+                android:id="@+id/temperature"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_below="@+id/city"
+                android:text="22"
+                android:textSize="80sp"
+                android:textColor="#ffffff"
+                android:layout_centerHorizontal="true"
+                />
+            <!--单位-->
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_toRightOf="@+id/temperature"
+                android:layout_below="@+id/city"
+                android:text="°"
+                android:textSize="56sp"
+                android:textColor="#ffffff"
+                android:layout_centerHorizontal="true"
+                />
+
+        </RelativeLayout>
+
+        <!--模块-->
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/now"
+            android:scrollbars="none">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="15dp"
+                >
+                <!--            空气质量-->
+
+                <TextView
+                    android:id="@+id/air"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/home_page_block"/>
+                <!--24h天气-->
+                <HorizontalScrollView
+                    android:id="@+id/all_day"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_below="@+id/air"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/home_page_block"
+                    android:scrollbars="none">
+                </HorizontalScrollView>
+
+            </RelativeLayout>
+
+        </ScrollView>
+
+    </RelativeLayout>
+
+
+    <!--    打开地图-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:gravity="right"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/map"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/button_round"
+            android:padding="16dp"
+            android:src="@drawable/ditu"
+            />
+    </RelativeLayout>
+
+</FrameLayout>
