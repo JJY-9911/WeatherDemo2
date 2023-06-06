@@ -5,11 +5,10 @@ import java.util.List;
 public class WeatherHourDTO {
 
    private String code;
-
-    private String updateTime;
-     private String fxLink;
-     private List<HourlyDTO> hourly;
-    private ReferDTO refer;
+   private String updateTime;
+   private String fxLink;
+   private List<HourlyDTO> hourly;
+   private ReferDTO refer;
 
     public String getCode() {
         return code;

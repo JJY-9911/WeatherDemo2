@@ -12,12 +12,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.menu.R;
 import com.example.menu.item.SearchListItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SearchListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     Context context;
-    List<SearchListItem> searchListItems = new ArrayList<>();
+    List<SearchListItem> searchListItems;
+    /**城市搜索条目的监听，点击条目后获取城市id，请求天气数据*/
+    private OnItemClickListener onItemClickListener = null;
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener){
+        this.onItemClickListener = onItemClickListener;
+    }
+    public interface OnItemClickListener{
+        void onItemClick(int position);
+    }
+
 
     public SearchListAdapter(Context context, List<SearchListItem> searchListItems) {
         this.context = context;
@@ -34,8 +42,13 @@ public class SearchListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ItemViewHolder itemViewHolder = (ItemViewHolder)holder;
         itemViewHolder.searchListText.setText(searchListItems.get(position).getName());
+        /**v就是被点击的view*/
+        itemViewHolder.itemView.setOnClickListener(v->{
+            if(onItemClickListener != null){
+                onItemClickListener.onItemClick(position);
+            }
+        });
     }
-
     @Override
     public int getItemCount() {
         return searchListItems.size();
@@ -49,5 +62,6 @@ public class SearchListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             super(itemView);
             this.searchListText = itemView.findViewById(R.id.search_city_text);
         }
+
     }
 }

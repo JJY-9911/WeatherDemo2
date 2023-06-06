@@ -12,9 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.TextView;
 
 import com.example.menu.adapter.CityManagerAdapter;
 import com.example.menu.adapter.SearchListAdapter;
@@ -44,11 +48,13 @@ public class CityActivity extends AppCompatActivity {
     ActivityCityBinding binding;
     RecyclerView cityManagerRecycler;
     RecyclerView searchRecycler;
-    List<CityManagerItem> cityMangerData;
-    List<SearchListItem> searchData;
+    List<CityManagerItem> cityMangerData = new ArrayList<>();
+    List<SearchListItem> searchData = new ArrayList<>();
     CityManagerAdapter cityManagerAdapter;
     SearchListAdapter searchListAdapter;
     BottomSheetDialog bottomSheetDialog;
+    private String name;
+    private String cityId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,17 +67,21 @@ public class CityActivity extends AppCompatActivity {
         bottomSheetDialog.setContentView(view);
 
         searchRecycler = view.findViewById(R.id.search_Recycler);
-        searchData = new ArrayList<>();
+
         /**从这里开始，用户随时可能点击按钮发送异步的网络请求，所以适配器的初始化等主线程的UI操作至此全部结束*/
-        binding.button.setOnClickListener(new View.OnClickListener() {
+        binding.edit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public void onClick(View v) {
-                if (!searchData.isEmpty()) {
-                    searchData.clear();
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH){
+                    if(!searchData.isEmpty()){
+                        searchData.clear();
+                    }
+                    String location = binding.edit.getText().toString();
+                    searchCity(location);
+                    hideKeyboard();
+                    return true;
                 }
-                String location = binding.edit.getText().toString();
-                searchCity(location);
-                hideKeyboard();
+                return false;
             }
         });
     }
@@ -98,25 +108,34 @@ public class CityActivity extends AppCompatActivity {
                          * @param cityId 天气接口的请求需要城市id
                          * */
                         for (int i = 0; i < cityDTO.getLocation().size(); i++) {
-                            String name = cityDTO.getLocation().get(i).getName();
-                            String cityId = cityDTO.getLocation().get(i).getId();
-                            System.out.println(i + name + cityId);
-                            searchData.add(new SearchListItem(name));
-                            }
+                            name = cityDTO.getLocation().get(i).getName();
+                            cityId = cityDTO.getLocation().get(i).getId();
+                            Log.d(TAG, "" + i + name + cityId);
+                            searchData.add(new SearchListItem(name,cityId));
+                        }
                     }else {
-                        searchData.add(new SearchListItem("查询不到，请重新输入"));
-                        Log.d(TAG,"请正确输入城市或区" + "code=" + cityDTO.getCode());
+                        searchData.add(new SearchListItem("查询不到，请重新输入","404"));
                     }
                     runOnUiThread(()-> {
-                                searchListAdapter = new SearchListAdapter(CityActivity.this,searchData);
-                                searchRecycler.setAdapter(searchListAdapter);
-                                searchRecycler.setLayoutManager(new LinearLayoutManager(CityActivity.this));
-                                bottomSheetDialog.show();
-                            }
+                        SearchListAdapter.OnItemClickListener onItemClickListener = position -> {
+                            String selectId = searchData.get(position).getId();
+                            String selectCity = searchData.get(position).getName();
+                            Log.d("选择城市", selectId + selectCity);
+                        };
+                        searchListAdapter = new SearchListAdapter(CityActivity.this,searchData);
+                        searchListAdapter.setOnItemClickListener(onItemClickListener);
+                        searchRecycler.setAdapter(searchListAdapter);
+                        searchRecycler.setLayoutManager(new LinearLayoutManager(CityActivity.this));
+                        bottomSheetDialog.show();
+                    }
                     );
                 }
             }
         });
+    }
+
+    public void getWeather(String selectId){
+
     }
 
     public void hideKeyboard() {
