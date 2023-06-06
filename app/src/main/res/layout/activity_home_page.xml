@@ -99,7 +99,8 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_below="@+id/hourly_title"/>
+                        android:layout_below="@+id/hourly_title"
+                        tools:listitem="@layout/hourly_item"/>
                 </RelativeLayout>
 
                 <!--7天天气-->
