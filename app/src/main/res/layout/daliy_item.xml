@@ -1,6 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="40dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/daily_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="06-07"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:layout_marginLeft="16dp"/>
+
+    <TextView
+        android:id="@+id/daily_icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/sunny"
+        android:layout_marginLeft="32dp"
+        />
+
+    <TextView
+        android:id="@+id/daily_min"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="15"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:layout_marginLeft="32dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="°"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        />
+
+    <TextView
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/jindutiao"
+
+        />
+
+    <TextView
+        android:id="@+id/daily_max"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="32"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="°"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+
+        />
+
+
+
+
+
+</LinearLayout>

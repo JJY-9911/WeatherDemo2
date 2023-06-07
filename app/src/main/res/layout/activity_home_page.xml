@@ -97,6 +97,7 @@
                         android:textStyle="bold"
                         />
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/hourly_recycler"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_below="@+id/hourly_title"
@@ -120,12 +121,13 @@
                         android:textStyle="bold"
                         android:textColor="#88ffffff"/>
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/all_week"
+                        android:id="@+id/daily_recycler"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/seven_title"
                         android:layout_marginTop="10dp"
                         android:scrollbars="none"
+                        tools:listitem="@layout/daliy_item"
                     />
                 </RelativeLayout>
 

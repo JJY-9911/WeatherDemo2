@@ -10,48 +10,48 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.menu.R;
-import com.example.menu.item.HourlyItem;
-
-import org.w3c.dom.Text;
+import com.example.menu.item.DailyItem;
 
 import java.util.List;
 
-public class HourlyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DailyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     Context context;
-    List<HourlyItem> hourlyList;
+    List<DailyItem> dailyList;
 
-    public HourlyAdapter(Context context, List<HourlyItem> hourlyList) {
+    public DailyAdapter(Context context, List<DailyItem> dailyList) {
         this.context = context;
-        this.hourlyList = hourlyList;
+        this.dailyList = dailyList;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.hourly_item,parent,false));
+        return new ViewHolder(LayoutInflater.from(context).inflate(R.layout.daliy_item,parent,false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.hour.setText(hourlyList.get(position).hour);
-        viewHolder.temperature.setText(hourlyList.get(position).temp);
+        viewHolder.date.setText(dailyList.get(position).getDate());
+        viewHolder.tempMax.setText(dailyList.get(position).getTempMax());
+        viewHolder.tempMin.setText(dailyList.get(position).getTempMin());
+
     }
 
     @Override
     public int getItemCount() {
-        return hourlyList.size();
+        return dailyList.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{
-        TextView hour;
-        TextView icon;
-        TextView temperature;
+        TextView date;
+        TextView tempMax;
+        TextView tempMin;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            hour = itemView.findViewById(R.id.hour_item_hour);
-            icon = itemView.findViewById(R.id.hour_item_icon);
-            temperature = itemView.findViewById(R.id.hour_item_temp);
+            date = itemView.findViewById(R.id.daily_date);
+            tempMax = itemView.findViewById(R.id.daily_max);
+            tempMin = itemView.findViewById(R.id.daily_min);
         }
     }
 }

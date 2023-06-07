@@ -1,20 +1,20 @@
 package com.example.menu.item;
 
 public class HourlyItem {
-    public String time;
+    public String hour;
     public String temp;
 
-    public HourlyItem(String time, String temp) {
-        this.time = time;
+    public HourlyItem(String hour, String temp) {
+        this.hour = hour;
         this.temp = temp;
     }
 
-    public String getTime() {
-        return time;
+    public String getHour() {
+        return hour;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setHour(String hour) {
+        this.hour = hour;
     }
 
     public String getTemp() {

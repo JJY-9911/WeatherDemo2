@@ -3,6 +3,8 @@ package com.example.menu;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.fragment.DialogFragmentNavigatorDestinationBuilder;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.ActivityOptions;
 import android.content.Intent;
@@ -12,6 +14,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.example.menu.adapter.DailyAdapter;
+import com.example.menu.adapter.HourlyAdapter;
 import com.example.menu.databinding.ActivityHomePageBinding;
 import com.example.menu.holder.DailyHolder;
 import com.example.menu.holder.HourlyHolder;
@@ -52,7 +56,7 @@ public class HomePageActivity extends AppCompatActivity {
             binding.headTemperature.setText(headList.get(1));
             binding.headText.setText(headList.get(2));
 
-            
+
             Log.d("head", "用户设置了地区" + headList.toString());
             Log.d("head", "24" + hourlyList.toString());
             Log.d("head", "7" + dailyList.toString());
@@ -61,5 +65,14 @@ public class HomePageActivity extends AppCompatActivity {
         }catch (Exception e){
         e.printStackTrace();
     }
+        DailyAdapter dailyAdapter = new DailyAdapter(HomePageActivity.this,dailyList);
+        binding.dailyRecycler.setAdapter(dailyAdapter);
+        binding.dailyRecycler.setLayoutManager(new LinearLayoutManager(HomePageActivity.this));
+
+        HourlyAdapter hourlyAdapter = new HourlyAdapter(HomePageActivity.this,hourlyList);
+        binding.hourlyRecycler.setAdapter(hourlyAdapter);
+        binding.hourlyRecycler.setLayoutManager(new GridLayoutManager(HomePageActivity.this,1,GridLayoutManager.HORIZONTAL, false));
+
+
     }
 }
