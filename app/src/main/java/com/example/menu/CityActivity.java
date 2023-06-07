@@ -243,8 +243,9 @@ public class CityActivity extends AppCompatActivity {
                     for (int i = 0; i < 24; i++) {
                         String time = weatherHourDTO.getHourly().get(i).getFxTime().substring(11,13);
                         String temp = weatherHourDTO.getHourly().get(i).getTemp();
-                        hourlyList.add(new HourlyItem(time, temp));
-                        Log.d("getWeather",  time + "\t气温：" + temp);
+                        String text = weatherHourDTO.getHourly().get(i).getText();
+                        hourlyList.add(new HourlyItem(time, temp,text));
+                        Log.d("getWeather",  time + "\t气温：" + temp + "\t" +text);
                     }
 
                     runOnUiThread(()->{

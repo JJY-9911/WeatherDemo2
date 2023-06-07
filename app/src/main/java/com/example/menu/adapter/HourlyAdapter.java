@@ -34,8 +34,22 @@ public class HourlyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.hour.setText(hourlyList.get(position).hour);
+        if (position == 0) {
+            viewHolder.hour.setText("现在");
+        }else {
+            viewHolder.hour.setText(hourlyList.get(position).hour);
+        }
         viewHolder.temperature.setText(hourlyList.get(position).temp);
+
+        if (hourlyList.get(position).text.contains("云")){
+            viewHolder.icon.setBackgroundResource(R.drawable.cloudy);
+        }
+        if (hourlyList.get(position).text.contains("雨")){
+            viewHolder.icon.setBackgroundResource(R.drawable.yu);
+        }
+        if (hourlyList.get(position).text.contains("晴")){
+            viewHolder.icon.setBackgroundResource(R.drawable.sunny);
+        }
     }
 
     @Override

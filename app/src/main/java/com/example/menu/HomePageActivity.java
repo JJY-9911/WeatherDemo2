@@ -1,6 +1,7 @@
 package com.example.menu;
 
 
+import androidx.annotation.ContentView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.fragment.DialogFragmentNavigatorDestinationBuilder;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -13,6 +14,7 @@ import android.security.identity.CipherSuiteNotSupportedException;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.example.menu.adapter.DailyAdapter;
 import com.example.menu.adapter.HourlyAdapter;
@@ -56,11 +58,21 @@ public class HomePageActivity extends AppCompatActivity {
             binding.headTemperature.setText(headList.get(1));
             binding.headText.setText(headList.get(2));
 
+            Log.d("backgroundImg", headList.get(2));
+            if(headList.get(2).contains("晴")){
+                binding.backgroundImg.setBackgroundResource(R.drawable.home_sunny);
+            }
+            if(headList.get(2).contains("雨")){
+                binding.backgroundImg.setBackgroundResource(R.drawable.home_rain);
+
+            }
+            if(headList.get(2).contains("云") || headList.get(2).contains("阴")){
+                binding.backgroundImg.setBackgroundResource(R.drawable.home_cloudy);
+
+            }
+
 
             Log.d("head", "用户设置了地区" + headList.toString());
-            Log.d("head", "24" + hourlyList.toString());
-            Log.d("head", "7" + dailyList.toString());
-
 
         }catch (Exception e){
         e.printStackTrace();

@@ -36,6 +36,15 @@ public class DailyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         viewHolder.tempMax.setText(dailyList.get(position).getTempMax());
         viewHolder.tempMin.setText(dailyList.get(position).getTempMin());
 
+        if (dailyList.get(position).getTextDay().contains("云")){
+            viewHolder.icon.setBackgroundResource(R.drawable.cloudy);
+        }
+        if (dailyList.get(position).getTextDay().contains("雨")){
+            viewHolder.icon.setBackgroundResource(R.drawable.yu);
+        }
+        if (dailyList.get(position).getTextDay().contains("晴")){
+            viewHolder.icon.setBackgroundResource(R.drawable.sunny);
+        }
     }
 
     @Override
@@ -47,11 +56,13 @@ public class DailyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         TextView date;
         TextView tempMax;
         TextView tempMin;
+        TextView icon;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             date = itemView.findViewById(R.id.daily_date);
             tempMax = itemView.findViewById(R.id.daily_max);
             tempMin = itemView.findViewById(R.id.daily_min);
+            icon = itemView.findViewById(R.id.daily_icon);
         }
     }
 }
