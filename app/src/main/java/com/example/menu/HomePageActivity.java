@@ -13,6 +13,10 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.example.menu.databinding.ActivityHomePageBinding;
+import com.example.menu.holder.DailyHolder;
+import com.example.menu.holder.HourlyHolder;
+import com.example.menu.item.DailyItem;
+import com.example.menu.item.HourlyItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +24,8 @@ import java.util.List;
 public class HomePageActivity extends AppCompatActivity {
     private ActivityHomePageBinding binding;
     List<String> headList = new ArrayList<>();
+    List<HourlyItem>hourlyList = new ArrayList<>();
+    List<DailyItem>dailyList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +41,23 @@ public class HomePageActivity extends AppCompatActivity {
             }
         });
         try {
-            headList = getIntent().getStringArrayListExtra("homePage");
+            headList = getIntent().getStringArrayListExtra("headList");
             Log.d("getStringArrayListExtra", headList.toString());
 
-            headList = getIntent().getStringArrayListExtra("homePage");
+            headList = getIntent().getStringArrayListExtra("headList");
+            hourlyList = HourlyHolder.getHourlyList();
+            dailyList = DailyHolder.getDailyList();
+
             binding.headCity.setText(headList.get(0));
             binding.headTemperature.setText(headList.get(1));
             binding.headText.setText(headList.get(2));
+
+            
             Log.d("head", "用户设置了地区" + headList.toString());
+            Log.d("head", "24" + hourlyList.toString());
+            Log.d("head", "7" + dailyList.toString());
+
+
         }catch (Exception e){
         e.printStackTrace();
     }

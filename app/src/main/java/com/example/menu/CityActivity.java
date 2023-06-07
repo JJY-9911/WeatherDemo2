@@ -21,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.example.menu.adapter.CityManagerAdapter;
@@ -29,8 +28,10 @@ import com.example.menu.adapter.SearchListAdapter;
 import com.example.menu.databinding.ActivityCityBinding;
 
 import com.example.menu.dto.CityDTO;
-import com.example.menu.dto.HomePageDTO;
-import com.example.menu.dto.HourlyItem;
+import com.example.menu.holder.DailyHolder;
+import com.example.menu.holder.HourlyHolder;
+import com.example.menu.item.DailyItem;
+import com.example.menu.item.HourlyItem;
 import com.example.menu.dto.WeatherHourDTO;
 import com.example.menu.dto.WeatherNowDTO;
 import com.example.menu.dto.WeatherSevenDTO;
@@ -38,13 +39,12 @@ import com.example.menu.item.CityManagerItem;
 
 import com.example.menu.item.SearchListItem;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.resources.TextAppearanceFontCallback;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import okhttp3.Call;
@@ -63,14 +63,19 @@ public class CityActivity extends AppCompatActivity {
     /**搜索联想列表*/
     List<SearchListItem> searchData = new ArrayList<>();
     /**主页最上方的大字*/
-    private List<String> headList;
+    private List<String> headList = new ArrayList<>();
     private List<HourlyItem> hourlyList = new ArrayList<>();
-    private List<String> dailyList;
+    private List<DailyItem> dailyList = new ArrayList<>();
+
     CityManagerAdapter cityManagerAdapter;
     SearchListAdapter searchListAdapter;
     BottomSheetDialog bottomSheetDialog;
     private String name;
     private String cityId;
+    /**用于记录异步请求完成的情况，三个都完成了再走下一步*/
+    private boolean FLAG_NOW = false;
+    private boolean FLAG_HOURLY = false;
+    private boolean FLAG_DAILY = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,24 +107,39 @@ public class CityActivity extends AppCompatActivity {
         });
     }
 
-    public void searchCity(String location){
-        final String TAG = "searchCity";
+
+    /**每一个异步请求完成时，都会判断另外两个是否完成，只有等最后一个完成了才会进入这个方法*/
+    private void jump() {
+        if(FLAG_NOW && FLAG_HOURLY && FLAG_DAILY){
+
+            Log.d("jump", "跳转中。。。 ");
+            Intent intent = new Intent(CityActivity.this,HomePageActivity.class);
+
+            intent.putStringArrayListExtra("headList", new ArrayList<>(headList));
+            HourlyHolder.setHourlyList(hourlyList);
+            DailyHolder.setDailyList(dailyList);
+
+            startActivity(intent);
+        }
+    }
+
+    private void searchCity(String location){
         OkHttpClient okHttpClient = new OkHttpClient();
         Request  request = new Request.Builder().url(URL_CITY + location + MY_KEY).build();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.d(TAG,"网络请求失败");
+                Log.d("searchCity","网络请求失败");
             }
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if(response.isSuccessful()){
                     String str = response.body().string();
-                    Log.d(TAG,"请求接口成功" + str);
+                    Log.d("searchCity","请求接口成功" + str);
                     Gson gson = new Gson();
                     CityDTO cityDTO = gson.fromJson(str,CityDTO.class);
                     if (cityDTO.getCode().equals("200")){
-                        Log.d(TAG,"查询成功" + "code=" + cityDTO.getCode());
+                        Log.d("searchCity","查询成功" + "code=" + cityDTO.getCode());
                         /**
                          * @param name 城市名或者区名，作为联想搜索列表的数据源
                          * @param cityId 天气接口的请求需要城市id
@@ -127,20 +147,23 @@ public class CityActivity extends AppCompatActivity {
                         for (int i = 0; i < cityDTO.getLocation().size(); i++) {
                             name = cityDTO.getLocation().get(i).getName();
                             cityId = cityDTO.getLocation().get(i).getId();
-                            Log.d(TAG, "" + i + name + cityId);
+                            Log.d("searchCity", "" + i + name + cityId);
                             searchData.add(new SearchListItem(name,cityId));
                         }
                     }else {
                         searchData.add(new SearchListItem("查询不到，请重新输入","404"));
                     }
+
                     runOnUiThread(()-> {
+                        searchListAdapter = new SearchListAdapter(CityActivity.this,searchData);
+
                         SearchListAdapter.OnItemClickListener onItemClickListener = position -> {
                             String selectId = searchData.get(position).getId();
                             String selectCity = searchData.get(position).getName();
                             Log.d("选择城市", selectId + selectCity);
                             getWeather(selectId,selectCity);
                         };
-                        searchListAdapter = new SearchListAdapter(CityActivity.this,searchData);
+
                         searchListAdapter.setOnItemClickListener(onItemClickListener);
                         searchRecycler.setAdapter(searchListAdapter);
                         searchRecycler.setLayoutManager(new LinearLayoutManager(CityActivity.this));
@@ -152,8 +175,9 @@ public class CityActivity extends AppCompatActivity {
         });
     }
 
-    public void getWeather(String selectId,String cityName){
-        final String TAG = "getWeather";
+
+    /**发送三个异步请求的方法*/
+    private void getWeather(String selectId,String cityName){
         Request request1 = new Request.Builder().url(URL_WEATHER_NOW + selectId + MY_KEY).build();
         Request request2 = new Request.Builder().url(URL_WEATHER_hour + selectId + MY_KEY).build();
         Request request3 = new Request.Builder().url(URL_WEATHER_7 + selectId + MY_KEY).build();
@@ -162,11 +186,9 @@ public class CityActivity extends AppCompatActivity {
         getHourly(request2);
         getSeven(request3);
 
-        Intent intent = new Intent(CityActivity.this,HomePageActivity.class);
-
     }
 
-    public void getNow(Request request,String cityName){
+    private void getNow(Request request,String cityName){
         OkHttpClient okHttpClient = new OkHttpClient();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -180,32 +202,30 @@ public class CityActivity extends AppCompatActivity {
                     Log.d("getWeather","请求实时天气接口成功" + str);
                     Gson gson = new Gson();
                     WeatherNowDTO weatherNowDTO = gson.fromJson(str,WeatherNowDTO.class);
-                    if(weatherNowDTO.getCode().equals("200")){
-                        Log.d("getNow","查询成功" + "code=" + weatherNowDTO.getCode());
-                        /**
-                         * @param headList 主页上方的大字
-                         * @param temp 气温
-                         * @param text 描述多云等
-                         * */
-                        String temp = weatherNowDTO.getNow().getTemp();
-                        String text = weatherNowDTO.getNow().getText();
-                        headList = new ArrayList<>();
-                        headList.add(cityName);
-                        headList.add(temp);
-                        headList.add(text);
-                        Log.d("getWeather", cityName + "\n气温:" + temp + "\n描述:" + text);
-                        /**获取主页数据源，跳转到主页*/
-                        runOnUiThread(()->{
-                            Intent intent = new Intent(CityActivity.this,HomePageActivity.class);
-                            intent.putStringArrayListExtra("homePage",new ArrayList<>(headList));
-                            startActivity(intent);
-                        });
-                    }
+                    
+                    Log.d("getNow","查询成功" + "code=" + weatherNowDTO.getCode());
+                    /**
+                     * @param headList 主页上方的大字
+                     * @param temp 气温
+                     * @param text 描述多云等
+                     * */
+                    String temp = weatherNowDTO.getNow().getTemp();
+                    String text = weatherNowDTO.getNow().getText();
+                    headList.add(cityName);
+                    headList.add(temp);
+                    headList.add(text);
+                    Log.d("getWeather", cityName + "\n气温:" + temp + "\n描述:" + text);
+
+                    runOnUiThread(()->{
+                        FLAG_NOW = true;
+                        Log.d("FLAG_state", "FLAG_NOW: true");
+                        jump();
+                    });
                 }
             }
         });
     }
-    public void getHourly(Request request){
+    private void getHourly(Request request){
         OkHttpClient okHttpClient = new OkHttpClient();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -226,11 +246,17 @@ public class CityActivity extends AppCompatActivity {
                         hourlyList.add(new HourlyItem(time, temp));
                         Log.d("getWeather",  time + "\t气温：" + temp);
                     }
+
+                    runOnUiThread(()->{
+                        FLAG_HOURLY = true;
+                        Log.d("FLAG_state", "FLAG_HOURLY: true");
+                        jump();
+                    });
                 }
             }
         });
     }
-    public void getSeven(Request request){
+    private void getSeven(Request request){
         OkHttpClient okHttpClient = new OkHttpClient();
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -244,12 +270,26 @@ public class CityActivity extends AppCompatActivity {
                     Log.d("getWeather","请求7日接口成功" + str);
                     Gson gson = new Gson();
                     WeatherSevenDTO weatherSevenDTO = gson.fromJson(str,WeatherSevenDTO.class);
+
+                    for(int i = 0;i < 7;i++){
+                        String date = weatherSevenDTO.getDaily().get(i).getFxDate().substring(5,10);
+                        String tempMax = weatherSevenDTO.getDaily().get(i).getTempMax();
+                        String tempMin = weatherSevenDTO.getDaily().get(i).getTempMin();
+                        String textDay = weatherSevenDTO.getDaily().get(i).getTextDay();
+                        dailyList.add(new DailyItem(date,tempMax,tempMin,textDay));
+                        Log.d("getWeather", date + textDay + "\t最高" + tempMax + "\t最低" + tempMin);
+                    }
+                    runOnUiThread(()->{
+                        FLAG_DAILY = true;
+                        Log.d("FLAG_state", "FLAG_DAILY: true");
+                        jump();
+                    });
                 }
             }
         });
     }
 
-    public void hideKeyboard() {
+    private void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
     }

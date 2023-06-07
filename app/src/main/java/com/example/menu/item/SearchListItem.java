@@ -1,7 +1,7 @@
 package com.example.menu.item;
 
 
-/**联想搜索时展示的列表，只有城市名*/
+/**联想搜索时展示的列表*/
 public class SearchListItem {
     private String name;
     private String id;

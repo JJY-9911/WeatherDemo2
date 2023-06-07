@@ -1,4 +1,4 @@
-package com.example.menu.dto;
+package com.example.menu.item;
 
 public class HourlyItem {
     public String time;
